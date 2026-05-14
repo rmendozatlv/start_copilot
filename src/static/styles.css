@@ -60,18 +60,123 @@ section h3 {
 .activity-card {
   margin-bottom: 15px;
   padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  border: 1px solid #d9e2ff;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f8ff 100%);
+  box-shadow: 0 10px 24px rgba(26, 35, 126, 0.08);
 }
 
 .activity-card h4 {
-  margin-bottom: 10px;
-  color: #0066cc;
+  margin: 0;
+  color: #1a237e;
+  font-size: 1.1rem;
 }
 
 .activity-card p {
   margin-bottom: 8px;
+}
+
+.activity-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.activity-card__badge {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #e8f0ff;
+  color: #1a237e;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.activity-card__description {
+  color: #4a5568;
+}
+
+.activity-card__meta {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(26, 35, 126, 0.04);
+}
+
+.activity-card__meta p,
+.activity-card__participants p {
+  margin-bottom: 0;
+}
+
+.activity-card__participants {
+  margin-top: 14px;
+}
+
+.activity-card__participants h5 {
+  margin-bottom: 8px;
+  color: #1a237e;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.activity-card__participants ul {
+  margin: 0;
+  padding-left: 0;
+  display: grid;
+  gap: 6px;
+  list-style: none;
+}
+
+.participant-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(26, 35, 126, 0.1);
+}
+
+.participant-item--empty {
+  color: #6b7280;
+  font-style: italic;
+  justify-content: flex-start;
+}
+
+.participant-item__email {
+  color: #374151;
+  overflow-wrap: anywhere;
+}
+
+.participant-remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(198, 40, 40, 0.08);
+  color: #c62828;
+  padding: 0;
+  flex: 0 0 auto;
+}
+
+.participant-remove-button:hover {
+  background: rgba(198, 40, 40, 0.16);
+}
+
+.participant-remove-button svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 .form-group {
