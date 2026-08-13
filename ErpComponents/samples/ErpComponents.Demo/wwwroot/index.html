@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ErpComponents Demo</title>
+    <base href="/" />
+    
+    <!-- Tailwind CSS 4 (CDN para desarrollo) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- ErpComponents Styles -->
+    <link href="_content/ErpComponents.Core/css/erp-components.css" rel="stylesheet" />
+    
+    <!-- Custom styles for demo -->
+    <style>
+        .demo-section {
+            @apply mb-8 p-6 bg-white rounded-lg shadow;
+        }
+        
+        .demo-title {
+            @apply text-xl font-semibold mb-4 text-gray-800;
+        }
+        
+        .demo-grid {
+            @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div id="app">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <span class="ml-3 text-gray-600">Cargando...</span>
+        </div>
+    </div>
+
+    <div id="blazor-error-ui" class="hidden fixed bottom-0 left-0 right-0 bg-red-50 border-t border-red-200 p-4">
+        Un error ha ocurrido en la aplicación.
+        <button class="reload ml-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Recargar</button>
+        <button class="dismiss ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cerrar</button>
+    </div>
+
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>

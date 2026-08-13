@@ -1,0 +1,20 @@
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4">404</h1>
+                    <p class="text-gray-600 mb-6">Página no encontrada</p>
+                    <a href="/" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>

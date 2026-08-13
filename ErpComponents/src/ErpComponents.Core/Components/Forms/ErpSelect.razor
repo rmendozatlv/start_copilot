@@ -1,0 +1,266 @@
+@inherits ErpComponents.Core.Components.Base.ErpComponentBase
+
+<div @attributes="AdditionalAttributes" class="@GetSelectContainerClasses()">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label for="@ElementId" class="@GetLabelClasses()">
+            @Label
+            @if (Required)
+            {
+                <span class="@GetRequiredMarkClasses()">*</span>
+            }
+        </label>
+    }
+    
+    <div class="relative">
+        <select id="@ElementId"
+                @attributes="SelectElementAttributes"
+                @bind="CurrentValue"
+                class="@GetSelectClasses()"
+                disabled="@Disabled"
+                @onchange="HandleChange">
+            @if (!string.IsNullOrEmpty(Placeholder))
+            {
+                <option value="" disabled selected>@Placeholder</option>
+            }
+            @if (Options != null)
+            {
+                @foreach (var option in Options)
+                {
+                    <option value="@option.Value">@option.Text</option>
+                }
+            }
+            @ChildContent
+        </select>
+        
+        <!-- Icono de flecha personalizado -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+            <svg class="@GetChevronClasses()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </div>
+    </div>
+    
+    @if (ShowHint || !string.IsNullOrEmpty(HintText))
+    {
+        <p class="@GetHintClasses()">@HintText</p>
+    }
+    
+    @if (ValidationError)
+    {
+        <p class="@GetErrorClasses()">
+            @ErrorMessage
+        </p>
+    }
+</div>
+
+@code {
+    private string ElementId = $"erp-select-{Guid.NewGuid():N}";
+    
+    /// <summary>
+    /// Valor actual del select
+    /// </summary>
+    [Parameter]
+    public string? CurrentValue { get; set; }
+    
+    /// <summary>
+    /// Evento de cambio de valor
+    /// </summary>
+    [Parameter]
+    public EventCallback<string?> CurrentValueChanged { get; set; }
+    
+    /// <summary>
+    /// Etiqueta del select
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+    
+    /// <summary>
+    /// Placeholder del select
+    /// </summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+    
+    /// <summary>
+    /// Opciones del select
+    /// </summary>
+    [Parameter]
+    public IEnumerable<SelectOption>? Options { get; set; }
+    
+    /// <summary>
+    /// Contenido hijo para opciones personalizadas
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    /// <summary>
+    /// Indica si es requerido
+    /// </summary>
+    [Parameter]
+    public bool Required { get; set; }
+    
+    /// <summary>
+    /// Texto de ayuda
+    /// </summary>
+    [Parameter]
+    public string? HintText { get; set; }
+    
+    /// <summary>
+    /// Indica si mostrar el hint
+    /// </summary>
+    [Parameter]
+    public bool ShowHint { get; set; }
+    
+    /// <summary>
+    /// Indica si hay error de validación
+    /// </summary>
+    [Parameter]
+    public bool ValidationError { get; set; }
+    
+    /// <summary>
+    /// Mensaje de error
+    /// </summary>
+    [Parameter]
+    public string? ErrorMessage { get; set; }
+    
+    /// <summary>
+    /// Atributos adicionales para el elemento select
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? SelectElementAttributes { get; set; }
+    
+    /// <summary>
+    /// Obtiene las clases del contenedor
+    /// </summary>
+    private string GetSelectContainerClasses()
+    {
+        return BuildClass("w-full", "space-y-1");
+    }
+    
+    /// <summary>
+    /// Obtiene las clases de la etiqueta
+    /// </summary>
+    private string GetLabelClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "block",
+            "text-sm",
+            "font-medium",
+            $"text-[{theme.NeutralColors.Gray700}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del asterisco de requerido
+    /// </summary>
+    private string GetRequiredMarkClasses()
+    {
+        return BuildClass("text-red-500", "ml-1");
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del elemento select
+    /// </summary>
+    private string GetSelectClasses()
+    {
+        var theme = CurrentTheme;
+        var classes = new List<string>
+        {
+            "block",
+            "w-full",
+            "rounded-md",
+            "border",
+            $"border-[{theme.NeutralColors.Gray300}]",
+            GetSizeClasses(),
+            "pr-10", // Espacio para el icono de flecha
+            "transition-colors",
+            "duration-200",
+            "focus:outline-none",
+            "focus:ring-2",
+            $"focus:ring-[{theme.PrimaryColors.Light}]",
+            $"focus:border-[{theme.PrimaryColors.Default}]",
+            "appearance-none" // Remover estilo por defecto del navegador
+        };
+        
+        // Estado de error
+        if (ValidationError)
+        {
+            classes.Add($"border-[{theme.DangerColors.Default}]");
+            classes.Add($"focus:ring-[{theme.DangerColors.Light}]");
+        }
+        
+        // Estado deshabilitado
+        if (Disabled)
+        {
+            classes.Add($"bg-[{theme.NeutralColors.Gray100}]");
+            classes.Add($"text-[{theme.NeutralColors.Gray500}]");
+            classes.Add("cursor-not-allowed");
+        }
+        else
+        {
+            classes.Add($"bg-[{theme.NeutralColors.White}]");
+            classes.Add($"text-[{theme.NeutralColors.Gray900}]");
+        }
+        
+        return BuildClass(classes.ToArray());
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del icono chevron
+    /// </summary>
+    private string GetChevronClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            $"text-[{theme.NeutralColors.Gray400}]",
+            "w-5",
+            "h-5"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del texto de ayuda
+    /// </summary>
+    private string GetHintClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "text-xs",
+            $"text-[{theme.NeutralColors.Gray500}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del mensaje de error
+    /// </summary>
+    private string GetErrorClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "text-xs",
+            $"text-[{theme.DangerColors.Default}]",
+            "mt-1"
+        );
+    }
+    
+    /// <summary>
+    /// Maneja el evento de cambio
+    /// </summary>
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        if (CurrentValueValueChanged.HasDelegate)
+        {
+            await CurrentValueValueChanged.InvokeAsync(e.Value?.ToString());
+        }
+    }
+}
+
+/// <summary>
+/// Representa una opción de select
+/// </summary>
+public record SelectOption
+{
+    public string Value { get; init; } = "";
+    public string Text { get; init; } = "";
+}

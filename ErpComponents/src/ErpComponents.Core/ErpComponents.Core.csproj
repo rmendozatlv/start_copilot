@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ErpComponents.Core</RootNamespace>
+    
+    <!-- Package Metadata -->
+    <PackageId>ErpComponents.Core</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <Product>ERP Components Library</Product>
+    <Description>Componentes reutilizables para Blazor WebAssembly con Tailwind CSS 4, diseñados para sistemas ERP y altamente personalizables</Description>
+    <Copyright>Copyright © 2024</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/yourusername/erp-components</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yourusername/erp-components</RepositoryUrl>
+    <PackageTags>blazor;components;tailwind;erp;webassembly;razor</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    
+    <!-- Static Web Assets -->
+    <StaticWebAssetBasePath>/_content/ErpComponents.Core</StaticWebAssetBasePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+  </ItemGroup>
+
+  <!-- Tailwind CSS Integration -->
+  <ItemGroup>
+    <Content Remove="wwwroot\css\**\*.css" />
+    <None Include="wwwroot\css\**\*.css" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+</Project>
