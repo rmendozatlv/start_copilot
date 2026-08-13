@@ -1,0 +1,371 @@
+/* 
+ * ErpComponents Core Styles
+ * Tailwind CSS 4 Integration
+ */
+
+@import "tailwindcss";
+
+/* ========================================
+   CUSTOM CSS VARIABLES FOR THEMING
+   ======================================== */
+
+:root {
+    /* Primary Colors - Default Blue */
+    --erp-primary-lightest: #eff6ff;
+    --erp-primary-lighter: #dbeafe;
+    --erp-primary-light: #bfdbfe;
+    --erp-primary-default: #3b82f6;
+    --erp-primary-dark: #2563eb;
+    --erp-primary-darker: #1d4ed8;
+    --erp-primary-darkest: #1e40af;
+
+    /* Secondary Colors - Default Purple */
+    --erp-secondary-lightest: #faf5ff;
+    --erp-secondary-lighter: #f3e8ff;
+    --erp-secondary-light: #e9d5ff;
+    --erp-secondary-default: #a855f7;
+    --erp-secondary-dark: #9333ea;
+    --erp-secondary-darker: #7e22ce;
+    --erp-secondary-darkest: #6b21a8;
+
+    /* Success Colors - Default Green */
+    --erp-success-lightest: #f0fdf4;
+    --erp-success-lighter: #dcfce7;
+    --erp-success-light: #bbf7d0;
+    --erp-success-default: #22c55e;
+    --erp-success-dark: #16a34a;
+    --erp-success-darker: #15803d;
+    --erp-success-darkest: #166534;
+
+    /* Warning Colors - Default Amber */
+    --erp-warning-lightest: #fffbeb;
+    --erp-warning-lighter: #fef3c7;
+    --erp-warning-light: #fde68a;
+    --erp-warning-default: #f59e0b;
+    --erp-warning-dark: #d97706;
+    --erp-warning-darker: #b45309;
+    --erp-warning-darkest: #92400e;
+
+    /* Danger Colors - Default Red */
+    --erp-danger-lightest: #fef2f2;
+    --erp-danger-lighter: #fee2e2;
+    --erp-danger-light: #fecaca;
+    --erp-danger-default: #ef4444;
+    --erp-danger-dark: #dc2626;
+    --erp-danger-darker: #b91c1c;
+    --erp-danger-darkest: #991b1b;
+
+    /* Neutral Colors */
+    --erp-neutral-white: #ffffff;
+    --erp-neutral-gray-50: #f9fafb;
+    --erp-neutral-gray-100: #f3f4f6;
+    --erp-neutral-gray-200: #e5e7eb;
+    --erp-neutral-gray-300: #d1d5db;
+    --erp-neutral-gray-400: #9ca3af;
+    --erp-neutral-gray-500: #6b7280;
+    --erp-neutral-gray-600: #4b5563;
+    --erp-neutral-gray-700: #374151;
+    --erp-neutral-gray-800: #1f2937;
+    --erp-neutral-gray-900: #111827;
+    --erp-neutral-black: #000000;
+
+    /* Border Radius */
+    --erp-radius-sm: 0.125rem;
+    --erp-radius-md: 0.375rem;
+    --erp-radius-lg: 0.5rem;
+    --erp-radius-xl: 0.75rem;
+    --erp-radius-2xl: 1rem;
+    --erp-radius-full: 9999px;
+
+    /* Shadows */
+    --erp-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --erp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --erp-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --erp-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* Transitions */
+    --erp-transition-fast: 150ms;
+    --erp-transition-normal: 200ms;
+    --erp-transition-slow: 300ms;
+}
+
+/* ========================================
+   COMPONENT SPECIFIC STYLES
+   ======================================== */
+
+/* Button Component */
+.erp-button {
+    @apply inline-flex items-center justify-center font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.erp-button--primary {
+    @apply text-white;
+    background-color: var(--erp-primary-dark);
+}
+
+.erp-button--primary:hover:not(:disabled) {
+    background-color: var(--erp-primary-darker);
+}
+
+.erp-button--secondary {
+    @apply text-white;
+    background-color: var(--erp-secondary-dark);
+}
+
+.erp-button--success {
+    @apply text-white;
+    background-color: var(--erp-success-dark);
+}
+
+.erp-button--danger {
+    @apply text-white;
+    background-color: var(--erp-danger-dark);
+}
+
+.erp-button--warning {
+    @apply text-white;
+    background-color: var(--erp-warning-dark);
+}
+
+.erp-button--outline {
+    @apply border-2 bg-transparent;
+    border-color: var(--erp-primary-default);
+    color: var(--erp-primary-default);
+}
+
+.erp-button--outline:hover:not(:disabled) {
+    background-color: var(--erp-primary-lightest);
+}
+
+.erp-button--ghost {
+    @apply bg-transparent;
+    color: var(--erp-primary-default);
+}
+
+.erp-button--ghost:hover:not(:disabled) {
+    background-color: var(--erp-primary-lighter);
+}
+
+.erp-button:disabled {
+    @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
+
+/* Card Component */
+.erp-card {
+    @apply overflow-hidden rounded-lg;
+    background-color: var(--erp-neutral-white);
+    box-shadow: var(--erp-shadow-md);
+}
+
+.erp-card__header {
+    @apply px-6 py-4 border-b flex items-center justify-between;
+    border-color: var(--erp-neutral-gray-200);
+}
+
+.erp-card__title {
+    @apply text-lg font-semibold;
+    color: var(--erp-neutral-gray-900);
+}
+
+.erp-card__body {
+    @apply px-6 py-4;
+}
+
+.erp-card__footer {
+    @apply px-6 py-4 border-t;
+    border-color: var(--erp-neutral-gray-200);
+    background-color: var(--erp-neutral-gray-50);
+}
+
+/* Input Component */
+.erp-input-container {
+    @apply w-full space-y-1;
+}
+
+.erp-input-label {
+    @apply block text-sm font-medium;
+    color: var(--erp-neutral-gray-700);
+}
+
+.erp-input-label--required::after {
+    content: "*";
+    @apply text-red-500 ml-1;
+}
+
+.erp-input {
+    @apply block w-full rounded-md border transition-colors duration-200 focus:outline-none focus:ring-2;
+    border-color: var(--erp-neutral-gray-300);
+    background-color: var(--erp-neutral-white);
+    color: var(--erp-neutral-gray-900);
+}
+
+.erp-input:focus {
+    --tw-ring-color: var(--erp-primary-light);
+    border-color: var(--erp-primary-default);
+}
+
+.erp-input--error {
+    border-color: var(--erp-danger-default);
+}
+
+.erp-input--error:focus {
+    --tw-ring-color: var(--erp-danger-light);
+}
+
+.erp-input:disabled {
+    @apply cursor-not-allowed;
+    background-color: var(--erp-neutral-gray-100);
+    color: var(--erp-neutral-gray-500);
+}
+
+.erp-input-hint {
+    @apply text-xs;
+    color: var(--erp-neutral-gray-500);
+}
+
+.erp-input-error {
+    @apply text-xs mt-1;
+    color: var(--erp-danger-default);
+}
+
+/* Select Component */
+.erp-select {
+    @apply block w-full rounded-md border pr-10 transition-colors duration-200 focus:outline-none focus:ring-2 appearance-none;
+    border-color: var(--erp-neutral-gray-300);
+    background-color: var(--erp-neutral-white);
+    color: var(--erp-neutral-gray-900);
+}
+
+.erp-select:focus {
+    --tw-ring-color: var(--erp-primary-light);
+    border-color: var(--erp-primary-default);
+}
+
+.erp-select:disabled {
+    @apply cursor-not-allowed;
+    background-color: var(--erp-neutral-gray-100);
+    color: var(--erp-neutral-gray-500);
+}
+
+/* DataGrid Component */
+.erp-datagrid {
+    @apply w-full rounded-lg shadow;
+    background-color: var(--erp-neutral-white);
+}
+
+.erp-datagrid__header {
+    @apply px-6 py-4 border-b flex items-center justify-between;
+    border-color: var(--erp-neutral-gray-200);
+}
+
+.erp-datagrid__table {
+    @apply min-w-full divide-y;
+    border-color: var(--erp-neutral-gray-200);
+}
+
+.erp-datagrid__thead {
+    background-color: var(--erp-neutral-gray-50);
+}
+
+.erp-datagrid__th {
+    @apply px-6 py-3 text-left text-xs font-medium uppercase tracking-wider;
+    color: var(--erp-neutral-gray-500);
+}
+
+.erp-datagrid__tbody {
+    @apply divide-y;
+    border-color: var(--erp-neutral-gray-200);
+    background-color: var(--erp-neutral-white);
+}
+
+.erp-datagrid__td {
+    @apply px-6 py-4 whitespace-nowrap;
+}
+
+.erp-datagrid__row {
+    @apply hover:bg-[var(--erp-neutral-gray-50)] transition-colors cursor-pointer;
+}
+
+.erp-datagrid__row--striped:nth-child(even) {
+    background-color: var(--erp-neutral-gray-50);
+}
+
+/* Loading Spinner */
+.erp-spinner {
+    @apply animate-spin rounded-full border-b-2;
+    border-color: var(--erp-primary-default);
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.erp-sr-only {
+    @apply sr-only;
+}
+
+.erp-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ========================================
+   RESPONSIVE UTILITIES
+   ======================================== */
+
+@media (max-width: 640px) {
+    .erp-datagrid__table {
+        font-size: 0.875rem;
+    }
+    
+    .erp-datagrid__th,
+    .erp-datagrid__td {
+        @apply px-4 py-2;
+    }
+}
+
+/* ========================================
+   DARK MODE SUPPORT (Optional)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    /* Uncomment and customize for dark mode support */
+    /*
+    :root {
+        --erp-neutral-white: #1f2937;
+        --erp-neutral-gray-50: #111827;
+        --erp-neutral-gray-100: #1f2937;
+        --erp-neutral-gray-200: #374151;
+        --erp-neutral-gray-300: #4b5563;
+        --erp-neutral-gray-400: #6b7280;
+        --erp-neutral-gray-500: #9ca3af;
+        --erp-neutral-gray-600: #d1d5db;
+        --erp-neutral-gray-700: #e5e7eb;
+        --erp-neutral-gray-800: #f3f4f6;
+        --erp-neutral-gray-900: #f9fafb;
+    }
+    */
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+    .erp-button,
+    .erp-datagrid__actions {
+        display: none !important;
+    }
+    
+    .erp-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}

@@ -1,0 +1,263 @@
+@page "/"
+@using ErpComponents.Core.Interfaces
+@using ErpComponents.Core.Theme
+@inject IThemeConfiguration Theme
+
+<PageTitle>ErpComponents Demo</PageTitle>
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-2 text-gray-900">ErpComponents Demo</h1>
+    <p class="text-gray-600 mb-8">Biblioteca de componentes Blazor con Tailwind CSS 4</p>
+
+    <!-- Botones -->
+    <div class="demo-section">
+        <h2 class="demo-title">Botones (ErpButton)</h2>
+        <div class="flex flex-wrap gap-4">
+            <ErpButton Variant="primary">Primario</ErpButton>
+            <ErpButton Variant="secondary">Secundario</ErpButton>
+            <ErpButton Variant="success">Éxito</ErpButton>
+            <ErpButton Variant="danger">Peligro</ErpButton>
+            <ErpButton Variant="warning">Advertencia</ErpButton>
+            <ErpButton Variant="outline">Outline</ErpButton>
+            <ErpButton Variant="ghost">Ghost</ErpButton>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 mt-4">
+            <ErpButton Variant="primary" Size="sm">Pequeño</ErpButton>
+            <ErpButton Variant="primary" Size="md">Mediano</ErpButton>
+            <ErpButton Variant="primary" Size="lg">Grande</ErpButton>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 mt-4">
+            <ErpButton Variant="primary" Icon="💾" Loading="@isLoading">Cargando</ErpButton>
+            <ErpButton Variant="danger" Icon="🗑️">Eliminar</ErpButton>
+            <ErpButton Variant="primary" Disabled>Deshabilitado</ErpButton>
+        </div>
+    </div>
+
+    <!-- Tarjetas -->
+    <div class="demo-section">
+        <h2 class="demo-title">Tarjetas (ErpCard)</h2>
+        <div class="demo-grid">
+            <ErpCard Title="Tarjeta Básica" Elevation="md">
+                <p class="text-gray-600">Contenido básico de la tarjeta con sombra media.</p>
+            </ErpCard>
+            
+            <ErpCard Title="Tarjeta con Subtítulo" Subtitle="Información adicional" Elevation="lg">
+                <p class="text-gray-600">Esta tarjeta incluye un subtítulo y sombra grande.</p>
+            </ErpCard>
+            
+            <ErpCard Title="Tarjeta Interactiva" ShowCloseButton="true" OnClose="HandleCardClose" Elevation="xl">
+                <p class="text-gray-600">Esta tarjeta tiene botón de cerrar y sombra extra grande.</p>
+            </ErpCard>
+        </div>
+    </div>
+
+    <!-- Formularios -->
+    <div class="demo-section">
+        <h2 class="demo-title">Formularios</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <ErpInput 
+                    Label="Nombre Completo" 
+                    @bind-CurrentValue="@nombre" 
+                    Placeholder="Ingresa tu nombre"
+                    Icon="👤"
+                    Required />
+                
+                <ErpInput 
+                    Label="Email" 
+                    @bind-CurrentValue="@email" 
+                    Type="email"
+                    Placeholder="tu@email.com"
+                    Icon="📧"
+                    Required
+                    class="mt-4" />
+                
+                <ErpInput 
+                    Label="Contraseña" 
+                    @bind-CurrentValue="@password" 
+                    Type="password"
+                    Placeholder="••••••••"
+                    ShowPasswordToggle="true"
+                    class="mt-4" />
+                
+                <ErpInput 
+                    Label="Mensaje" 
+                    @bind-CurrentValue="@mensaje" 
+                    Multiline="true"
+                    Rows="4"
+                    Placeholder="Escribe tu mensaje..."
+                    class="mt-4" />
+            </div>
+            
+            <div>
+                <ErpSelect 
+                    Label="País" 
+                    @bind-CurrentValue="@paisSeleccionado"
+                    Options="@paisesOptions"
+                    Placeholder="Selecciona un país"
+                    Required />
+                
+                <ErpSelect 
+                    Label="Estado" 
+                    @bind-CurrentValue="@estadoSeleccionado"
+                    Options="@estadosOptions"
+                    Placeholder="Selecciona un estado"
+                    class="mt-4" />
+                
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-blue-900 mb-2">Datos del Formulario:</h3>
+                    <pre class="text-sm text-blue-700">@GetFormData()</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataGrid -->
+    <div class="demo-section">
+        <h2 class="demo-title">Tabla de Datos (ErpDataGrid)</h2>
+        <ErpDataGrid 
+            Title="Clientes"
+            Data="@clientes"
+            Columns="@columnas"
+            ShowPagination="true"
+            PageSize="5"
+            ShowRowSelection="true"
+            @bind-SelectedItems="@selectedClientes">
+            
+            <ToolbarTemplate>
+                <ErpButton Variant="primary" Size="sm" OnClick="AgregarCliente">
+                    + Nuevo Cliente
+                </ErpButton>
+            </ToolbarTemplate>
+            
+            <ActionsTemplate context="cliente">
+                <ErpButton Variant="ghost" Size="sm" OnClick="() => EditarCliente(cliente)">
+                    Editar
+                </ErpButton>
+            </ActionsTemplate>
+        </ErpDataGrid>
+        
+        @if (selectedClientes != null && selectedClientes.Any())
+        {
+            <div class="mt-4 p-3 bg-green-50 rounded-lg">
+                <p class="text-sm text-green-800">
+                    <strong>@selectedClientes.Count()</strong> cliente(s) seleccionado(s)
+                </p>
+            </div>
+        }
+    </div>
+
+    <!-- Tema Personalizado -->
+    <div class="demo-section">
+        <h2 class="demo-title">Tema Personalizado</h2>
+        <div class="flex flex-wrap gap-4 mb-4">
+            <ErpButton Variant="outline" OnClick="AplicarTemaAzul">Tema Azul</ErpButton>
+            <ErpButton Variant="outline" OnClick="AplicarTemaPurpura">Tema Púrpura</ErpButton>
+            <ErpButton Variant="outline" OnClick="AplicarTemaVerde">Tema Verde</ErpButton>
+        </div>
+        <p class="text-sm text-gray-600">
+            Los componentes usan variables CSS que pueden ser personalizadas dinámicamente.
+        </p>
+    </div>
+</div>
+
+@code {
+    private bool isLoading = false;
+    private string? nombre;
+    private string? email;
+    private string? password;
+    private string? mensaje;
+    private string? paisSeleccionado;
+    private string? estadoSeleccionado;
+    private IEnumerable<object>? selectedClientes;
+    
+    private List<SelectOption> paisesOptions = new()
+    {
+        new() { Value = "mx", Text = "México" },
+        new() { Value = "co", Text = "Colombia" },
+        new() { Value = "ar", Text = "Argentina" },
+        new() { Value = "es", Text = "España" }
+    };
+    
+    private List<SelectOption> estadosOptions = new()
+    {
+        new() { Value = "activo", Text = "Activo" },
+        new() { Value = "inactivo", Text = "Inactivo" },
+        new() { Value = "pendiente", Text = "Pendiente" }
+    };
+    
+    private List<Cliente> clientes = new()
+    {
+        new() { Id = 1, Nombre = "Juan Pérez", Email = "juan@email.com", Empresa = "Tech Corp" },
+        new() { Id = 2, Nombre = "María García", Email = "maria@email.com", Empresa = "Digital SA" },
+        new() { Id = 3, Nombre = "Carlos López", Email = "carlos@email.com", Empresa = "Innovate Ltd" },
+        new() { Id = 4, Nombre = "Ana Martínez", Email = "ana@email.com", Empresa = "Startup Inc" },
+        new() { Id = 5, Nombre = "Luis Rodríguez", Email = "luis@email.com", Empresa = "Enterprise Co" },
+        new() { Id = 6, Nombre = "Sofia Hernández", Email = "sofia@email.com", Empresa = "Cloud Systems" },
+        new() { Id = 7, Nombre = "Miguel Torres", Email = "miguel@email.com", Empresa = "Data Solutions" }
+    };
+    
+    private IEnumerable<DataGridColumn> columnas = new[]
+    {
+        new DataGridColumn { Title = "ID", Field = "Id", Sortable = true, Width = "80px" },
+        new DataGridColumn { Title = "Nombre", Field = "Nombre", Sortable = true },
+        new DataGridColumn { Title = "Email", Field = "Email" },
+        new DataGridColumn { Title = "Empresa", Field = "Empresa" }
+    };
+    
+    private string GetFormData()
+    {
+        return System.Text.Json.JsonSerializer.Serialize(new
+        {
+            nombre,
+            email,
+            password,
+            mensaje,
+            pais = paisSeleccionado,
+            estado = estadoSeleccionado
+        }, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+    }
+    
+    private async Task HandleCardClose()
+    {
+        await Task.CompletedTask;
+        // Lógica para cerrar tarjeta
+    }
+    
+    private async Task AgregarCliente()
+    {
+        await Task.CompletedTask;
+        // Lógica para agregar cliente
+    }
+    
+    private async Task EditarCliente(Cliente cliente)
+    {
+        await Task.CompletedTask;
+        // Lógica para editar cliente
+    }
+    
+    private void AplicarTemaAzul()
+    {
+        // Cambiar tema a azul
+    }
+    
+    private void AplicarTemaPurpura()
+    {
+        // Cambiar tema a púrpura
+    }
+    
+    private void AplicarTemaVerde()
+    {
+        // Cambiar tema a verde
+    }
+    
+    public class Cliente
+    {
+        public int Id { get; set; }
+        public string? Nombre { get; set; }
+        public string? Email { get; set; }
+        public string? Empresa { get; set; }
+    }
+}

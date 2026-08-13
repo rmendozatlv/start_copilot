@@ -1,0 +1,257 @@
+@inherits ErpComponents.Core.Components.Base.ErpComponentBase
+
+<div @attributes="AdditionalAttributes" class="@GetCardClasses()">
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <div class="@GetHeaderClasses()">
+            <h3 class="@GetTitleClasses()">@Title</h3>
+            @if (HeaderTemplate != null)
+            {
+                @HeaderTemplate
+            }
+            @if (ShowCloseButton)
+            {
+                <button type="button" @onclick="HandleClose" class="@GetCloseButtonClasses()">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            }
+        </div>
+    }
+    
+    @if (HasSubtitle || SubtitleTemplate != null)
+    {
+        <div class="@GetSubtitleContainerClasses()">
+            @if (SubtitleTemplate == null)
+            {
+                <p class="@GetSubtitleClasses()">@Subtitle</p>
+            }
+            else
+            {
+                @SubtitleTemplate
+            }
+        </div>
+    }
+    
+    <div class="@GetBodyClasses()">
+        @ChildContent
+    </div>
+    
+    @if (FooterTemplate != null)
+    {
+        <div class="@GetFooterClasses()">
+            @FooterTemplate
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Título de la tarjeta
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+    
+    /// <summary>
+    /// Subtítulo de la tarjeta
+    /// </summary>
+    [Parameter]
+    public string? Subtitle { get; set; }
+    
+    /// <summary>
+    /// Indica si la tarjeta tiene subtítulo
+    /// </summary>
+    private bool HasSubtitle => !string.IsNullOrEmpty(Subtitle);
+    
+    /// <summary>
+    /// Plantilla personalizada para el encabezado
+    /// </summary>
+    [Parameter]
+    public RenderFragment? HeaderTemplate { get; set; }
+    
+    /// <summary>
+    /// Plantilla personalizada para el subtítulo
+    /// </summary>
+    [Parameter]
+    public RenderFragment? SubtitleTemplate { get; set; }
+    
+    /// <summary>
+    /// Plantilla personalizada para el contenido principal
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    /// <summary>
+    /// Plantilla personalizada para el pie de tarjeta
+    /// </summary>
+    [Parameter]
+    public RenderFragment? FooterTemplate { get; set; }
+    
+    /// <summary>
+    /// Indica si mostrar botón de cerrar
+    /// </summary>
+    [Parameter]
+    public bool ShowCloseButton { get; set; }
+    
+    /// <summary>
+    /// Evento cuando se cierra la tarjeta
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+    
+    /// <summary>
+    /// Nivel de elevación/sombra (none, sm, md, lg, xl)
+    /// </summary>
+    [Parameter]
+    public string Elevation { get; set; } = "md";
+    
+    /// <summary>
+    /// Atributos adicionales
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+    
+    /// <summary>
+    /// Obtiene las clases principales de la tarjeta
+    /// </summary>
+    private string GetCardClasses()
+    {
+        var theme = CurrentTheme;
+        
+        var classes = new List<string>
+        {
+            "overflow-hidden",
+            GetBgClass(theme.NeutralColors.White),
+            GetShadowClass()
+        };
+        
+        // Borde opcional
+        if (!string.IsNullOrEmpty(Class) && Class.Contains("border"))
+        {
+            classes.Add($"border border-[{theme.NeutralColors.Gray200}]");
+        }
+        
+        return BuildClass(classes.ToArray());
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del encabezado
+    /// </summary>
+    private string GetHeaderClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "px-6",
+            "py-4",
+            "border-b",
+            $"border-[{theme.NeutralColors.Gray200}]",
+            "flex",
+            "items-center",
+            "justify-between"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del título
+    /// </summary>
+    private string GetTitleClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "text-lg",
+            "font-semibold",
+            $"text-[{theme.NeutralColors.Gray900}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del contenedor del subtítulo
+    /// </summary>
+    private string GetSubtitleContainerClasses()
+    {
+        return BuildClass("px-6", "py-2");
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del subtítulo
+    /// </summary>
+    private string GetSubtitleClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "text-sm",
+            $"text-[{theme.NeutralColors.Gray600}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del cuerpo de la tarjeta
+    /// </summary>
+    private string GetBodyClasses()
+    {
+        return BuildClass("px-6", "py-4");
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del pie de tarjeta
+    /// </summary>
+    private string GetFooterClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "px-6",
+            "py-4",
+            "border-t",
+            $"border-[{theme.NeutralColors.Gray200}]",
+            $"bg-[{theme.NeutralColors.Gray50}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del botón de cerrar
+    /// </summary>
+    private string GetCloseButtonClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            $"{GetTextColor(theme.NeutralColors.Gray400)}",
+            "hover:" + GetTextColor(theme.NeutralColors.Gray600),
+            "focus:outline-none",
+            "transition-colors"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene la clase de sombra según la elevación
+    /// </summary>
+    private string GetShadowClass()
+    {
+        return Elevation switch
+        {
+            "none" => "shadow-none",
+            "sm" => "shadow-sm",
+            "lg" => "shadow-lg",
+            "xl" => "shadow-xl",
+            _ => "shadow-md"
+        };
+    }
+    
+    /// <summary>
+    /// Maneja el evento de cerrar
+    /// </summary>
+    private async Task HandleClose()
+    {
+        if (OnClose.HasDelegate)
+        {
+            await OnClose.InvokeAsync();
+        }
+    }
+    
+    #region Helper Methods
+    
+    private string GetBgClass(string colorHex) => $"bg-[{colorHex}]";
+    private string GetTextColor(string colorHex) => $"text-[{colorHex}]";
+    
+    #endregion
+}

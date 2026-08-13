@@ -1,0 +1,352 @@
+@inherits ErpComponents.Core.Components.Base.ErpComponentBase
+
+<div @attributes="AdditionalAttributes" class="@GetInputContainerClasses()">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label for="@ElementId" class="@GetLabelClasses()">
+            @Label
+            @if (Required)
+            {
+                <span class="@GetRequiredMarkClasses()">*</span>
+            }
+        </label>
+    }
+    
+    <div class="relative">
+        @if (!string.IsNullOrEmpty(Icon) && IconPosition == "left")
+        {
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="@GetIconClasses()">@Icon</span>
+            </div>
+        }
+        
+        @if (Multiline)
+        {
+            <textarea id="@ElementId"
+                      @attributes="InputElementAttributes"
+                      @bind="CurrentValue"
+                      @bind:event="oninput"
+                      class="@GetTextAreaClasses()"
+                      disabled="@Disabled"
+                      placeholder="@Placeholder"></textarea>
+        }
+        else
+        {
+            <input id="@ElementId"
+                   @attributes="InputElementAttributes"
+                   type="@GetTypeValue()"
+                   @bind="CurrentValue"
+                   @bind:event="oninput"
+                   class="@GetInputClasses()"
+                   disabled="@Disabled"
+                   placeholder="@Placeholder" />
+        }
+        
+        @if (!string.IsNullOrEmpty(Icon) && IconPosition == "right")
+        {
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <span class="@GetIconClasses()">@Icon</span>
+            </div>
+        }
+        
+        @if (Type == "password" && ShowPasswordToggle)
+        {
+            <button type="button" 
+                    @onclick="TogglePasswordVisibility"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <svg class="@GetEyeIconClasses()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    @if (passwordVisible)
+                    {
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    }
+                    else
+                    {
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 3.942-5.064 6.942-9.542 6.942-4.477 0-8.268-2.943-9.542-7z" />
+                    }
+                </svg>
+            </button>
+        }
+    </div>
+    
+    @if (ShowHint || !string.IsNullOrEmpty(HintText))
+    {
+        <p class="@GetHintClasses()">@HintText</p>
+    }
+    
+    @if (ValidationError)
+    {
+        <p class="@GetErrorClasses()">
+            @ErrorMessage
+        </p>
+    }
+</div>
+
+@code {
+    private bool passwordVisible;
+    private string ElementId = $"erp-input-{Guid.NewGuid():N}";
+    
+    /// <summary>
+    /// Valor actual del input
+    /// </summary>
+    [Parameter]
+    public string? CurrentValue { get; set; }
+    
+    /// <summary>
+    /// Evento de cambio de valor
+    /// </summary>
+    [Parameter]
+    public EventCallback<string?> CurrentValueChanged { get; set; }
+    
+    /// <summary>
+    /// Etiqueta del input
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+    
+    /// <summary>
+    /// Tipo de input (text, email, password, number, tel, etc.)
+    /// </summary>
+    [Parameter]
+    public string Type { get; set; } = "text";
+    
+    /// <summary>
+    /// Placeholder del input
+    /// </summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+    
+    /// <summary>
+    /// Icono del input
+    /// </summary>
+    [Parameter]
+    public string? Icon { get; set; }
+    
+    /// <summary>
+    /// Posición del icono (left, right)
+    /// </summary>
+    [Parameter]
+    public string IconPosition { get; set; } = "left";
+    
+    /// <summary>
+    /// Indica si es un campo requerido
+    /// </summary>
+    [Parameter]
+    public bool Required { get; set; }
+    
+    /// <summary>
+    /// Indica si es un textarea multilínea
+    /// </summary>
+    [Parameter]
+    public bool Multiline { get; set; }
+    
+    /// <summary>
+    /// Número de filas para textarea
+    /// </summary>
+    [Parameter]
+    public int Rows { get; set; } = 4;
+    
+    /// <summary>
+    /// Texto de ayuda/hint
+    /// </summary>
+    [Parameter]
+    public string? HintText { get; set; }
+    
+    /// <summary>
+    /// Indica si mostrar el hint
+    /// </summary>
+    [Parameter]
+    public bool ShowHint { get; set; }
+    
+    /// <summary>
+    /// Indica si hay error de validación
+    /// </summary>
+    [Parameter]
+    public bool ValidationError { get; set; }
+    
+    /// <summary>
+    /// Mensaje de error
+    /// </summary>
+    [Parameter]
+    public string? ErrorMessage { get; set; }
+    
+    /// <summary>
+    /// Indica si mostrar toggle de visibilidad para password
+    /// </summary>
+    [Parameter]
+    public bool ShowPasswordToggle { get; set; }
+    
+    /// <summary>
+    /// Atributos adicionales para el elemento input/textarea
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? InputElementAttributes { get; set; }
+    
+    /// <summary>
+    /// Obtiene las clases del contenedor principal
+    /// </summary>
+    private string GetInputContainerClasses()
+    {
+        return BuildClass("w-full", "space-y-1");
+    }
+    
+    /// <summary>
+    /// Obtiene las clases de la etiqueta
+    /// </summary>
+    private string GetLabelClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "block",
+            "text-sm",
+            "font-medium",
+            $"text-[{theme.NeutralColors.Gray700}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del asterisco de requerido
+    /// </summary>
+    private string GetRequiredMarkClasses()
+    {
+        return BuildClass("text-red-500", "ml-1");
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del input
+    /// </summary>
+    private string GetInputClasses()
+    {
+        var theme = CurrentTheme;
+        var classes = new List<string>
+        {
+            "block",
+            "w-full",
+            "rounded-md",
+            "border",
+            $"border-[{theme.NeutralColors.Gray300}]",
+            GetSizeClasses(),
+            "transition-colors",
+            "duration-200",
+            "focus:outline-none",
+            "focus:ring-2",
+            $"focus:ring-[{theme.PrimaryColors.Light}]",
+            $"focus:border-[{theme.PrimaryColors.Default}]"
+        };
+        
+        // Padding para iconos
+        if (!string.IsNullOrEmpty(Icon))
+        {
+            classes.Add(IconPosition == "left" ? "pl-10" : "pr-10");
+        }
+        
+        // Estado de error
+        if (ValidationError)
+        {
+            classes.Add($"border-[{theme.DangerColors.Default}]");
+            classes.Add($"focus:ring-[{theme.DangerColors.Light}]");
+        }
+        
+        // Estado deshabilitado
+        if (Disabled)
+        {
+            classes.Add($"bg-[{theme.NeutralColors.Gray100}]");
+            classes.Add($"text-[{theme.NeutralColors.Gray500}]");
+            classes.Add("cursor-not-allowed");
+        }
+        else
+        {
+            classes.Add($"bg-[{theme.NeutralColors.White}]");
+            classes.Add($"text-[{theme.NeutralColors.Gray900}]");
+        }
+        
+        return BuildClass(classes.ToArray());
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del textarea
+    /// </summary>
+    private string GetTextAreaClasses()
+    {
+        var classes = new List<string>
+        {
+            GetInputClasses(),
+            "resize-y",
+            "min-h-[100px]"
+        };
+        
+        return BuildClass(classes.ToArray());
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del icono
+    /// </summary>
+    private string GetIconClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            $"text-[{theme.NeutralColors.Gray400}]",
+            "w-5",
+            "h-5"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del icono de ojo para password
+    /// </summary>
+    private string GetEyeIconClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            $"text-[{theme.NeutralColors.Gray400}]",
+            "w-5",
+            "h-5",
+            "hover:" + $"text-[{theme.NeutralColors.Gray600}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del texto de ayuda
+    /// </summary>
+    private string GetHintClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "text-xs",
+            $"text-[{theme.NeutralColors.Gray500}]"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del mensaje de error
+    /// </summary>
+    private string GetErrorClasses()
+    {
+        var theme = CurrentTheme;
+        return BuildClass(
+            "text-xs",
+            $"text-[{theme.DangerColors.Default}]",
+            "mt-1"
+        );
+    }
+    
+    /// <summary>
+    /// Obtiene el tipo de input real
+    /// </summary>
+    private string GetTypeValue()
+    {
+        if (Type == "password" && passwordVisible)
+        {
+            return "text";
+        }
+        return Type;
+    }
+    
+    /// <summary>
+    /// Alterna la visibilidad del password
+    /// </summary>
+    private void TogglePasswordVisibility()
+    {
+        passwordVisible = !passwordVisible;
+    }
+}

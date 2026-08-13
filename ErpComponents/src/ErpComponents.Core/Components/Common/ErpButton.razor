@@ -1,0 +1,165 @@
+@inherits ErpComponents.Core.Components.Base.ErpComponentBase
+
+<button @attributes="AdditionalAttributes" 
+        type="@Type" 
+        disabled="@Disabled"
+        class="@GetButtonClasses()"
+        @onclick="HandleClick">
+    @if (Loading)
+    {
+        <span class="animate-spin mr-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </span>
+    }
+    @if (!string.IsNullOrEmpty(Icon) && !Loading)
+    {
+        <span class="@GetIconClasses()">@Icon</span>
+    }
+    <span>@ChildContent</span>
+</button>
+
+@code {
+    /// <summary>
+    /// Contenido del botón
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    /// <summary>
+    /// Tipo de botón (button, submit, reset)
+    /// </summary>
+    [Parameter]
+    public string Type { get; set; } = "button";
+    
+    /// <summary>
+    /// Variante del botón (primary, secondary, success, danger, warning, info, outline, ghost)
+    /// </summary>
+    [Parameter]
+    public string Variant { get; set; } = "primary";
+    
+    /// <summary>
+    /// Icono del botón (clases CSS o SVG)
+    /// </summary>
+    [Parameter]
+    public string? Icon { get; set; }
+    
+    /// <summary>
+    /// Posición del icono (left, right)
+    /// </summary>
+    [Parameter]
+    public string IconPosition { get; set; } = "left";
+    
+    /// <summary>
+    /// Indica si el botón está en estado de carga
+    /// </summary>
+    [Parameter]
+    public bool Loading { get; set; }
+    
+    /// <summary>
+    /// Evento click del botón
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+    
+    /// <summary>
+    /// Atributos adicionales para el elemento button
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+    
+    /// <summary>
+    /// Obtiene las clases CSS según la variante y tamaño
+    /// </summary>
+    private string GetButtonClasses()
+    {
+        var theme = CurrentTheme;
+        
+        var baseClasses = new List<string>
+        {
+            "inline-flex",
+            "items-center",
+            "justify-center",
+            "font-medium",
+            "rounded-md",
+            "transition-colors",
+            "duration-200",
+            "focus:outline-none",
+            "focus:ring-2",
+            "focus:ring-offset-2",
+            GetSizeClasses()
+        };
+        
+        // Clases según la variante
+        var variantClasses = Variant switch
+        {
+            "primary" => $"{GetBgClass(theme.PrimaryColors.Dark)} text-white hover:{GetBgClass(theme.PrimaryColors.Darker)} focus:ring-{GetRingColor(theme.PrimaryColors.Default)}",
+            "secondary" => $"{GetBgClass(theme.SecondaryColors.Dark)} text-white hover:{GetBgClass(theme.SecondaryColors.Darker)} focus:ring-{GetRingColor(theme.SecondaryColors.Default)}",
+            "success" => $"{GetBgClass(theme.SuccessColors.Dark)} text-white hover:{GetBgClass(theme.SuccessColors.Darker)} focus:ring-{GetRingColor(theme.SuccessColors.Default)}",
+            "danger" => $"{GetBgClass(theme.DangerColors.Dark)} text-white hover:{GetBgClass(theme.DangerColors.Darker)} focus:ring-{GetRingColor(theme.DangerColors.Default)}",
+            "warning" => $"{GetBgClass(theme.WarningColors.Dark)} text-white hover:{GetBgClass(theme.WarningColors.Darker)} focus:ring-{GetRingColor(theme.WarningColors.Default)}",
+            "info" => $"{GetBgClass(theme.InfoColors.Dark)} text-white hover:{GetBgClass(theme.InfoColors.Darker)} focus:ring-{GetRingColor(theme.InfoColors.Default)}",
+            "outline" => $"border-2 border-{GetBorderColor(theme.PrimaryColors.Default)} text-{GetTextColor(theme.PrimaryColors.Default)} hover:{GetBgClass(theme.PrimaryColors.Lightest)} focus:ring-{GetRingColor(theme.PrimaryColors.Default)}",
+            "ghost" => $"text-{GetTextColor(theme.PrimaryColors.Default)} hover:{GetBgClass(theme.PrimaryColors.Lighter)} focus:ring-{GetRingColor(theme.PrimaryColors.Default)}",
+            _ => $"{GetBgClass(theme.PrimaryColors.Dark)} text-white hover:{GetBgClass(theme.PrimaryColors.Darker)}"
+        };
+        
+        baseClasses.Add(variantClasses);
+        
+        return BuildClass(baseClasses.ToArray());
+    }
+    
+    /// <summary>
+    /// Obtiene las clases del icono
+    /// </summary>
+    private string GetIconClasses()
+    {
+        var positionClass = IconPosition == "right" ? "ml-2" : "mr-2";
+        return $"{positionClass} w-5 h-5";
+    }
+    
+    /// <summary>
+    /// Maneja el evento click
+    /// </summary>
+    private async Task HandleClick(MouseEventArgs e)
+    {
+        if (!Disabled && !Loading && OnClick.HasDelegate)
+        {
+            await OnClick.InvokeAsync(e);
+        }
+    }
+    
+    #region Helper Methods for Tailwind Dynamic Classes
+    
+    /// <summary>
+    /// Convierte un color hex a clase bg de Tailwind
+    /// Nota: Para producción, se recomienda usar valores predefinidos de Tailwind
+    /// </summary>
+    private string GetBgClass(string colorHex)
+    {
+        // En Tailwind 4 con CSS variables, esto se puede hacer dinámicamente
+        // Por ahora usamos clases arbitrarias de Tailwind
+        return $"bg-[{colorHex}]";
+    }
+    
+    private string GetTextColor(string colorHex)
+    {
+        return $"text-[{colorHex}]";
+    }
+    
+    private string GetBorderColor(string colorHex)
+    {
+        return $"border-[{colorHex}]";
+    }
+    
+    private string GetRingColor(string colorHex)
+    {
+        // Removemos el # para usar en arbitrary values
+        var cleanColor = colorHex.Replace("#", "");
+        return $"[{colorHex}]";
+    }
+    
+    #endregion
+}
